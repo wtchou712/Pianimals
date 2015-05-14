@@ -39,10 +39,10 @@ void setup()
   size(displayWidth,displayHeight);
   noStroke();
   fill(0);
-  cow_img = loadImage("cartoon-frog.png");
-  elephant_img = loadImage("cartoon-frog.png");
-  frog_img = loadImage("cartoon-frog.png");
-  goat_img = loadImage("cartoon-frog.png");
+  cow_img = loadImage("cow.png");
+  elephant_img = loadImage("elephant.png");
+  frog_img = loadImage("frog.png");
+  goat_img = loadImage("goat.jpg");
   
   minim = new Minim(this);
   pianoA = minim.loadFile("pianoA.wav");

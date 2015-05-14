@@ -1,30 +1,16 @@
-/* //<>//
- TUIO 1.1 Demo for Processing
- Copyright (c) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
-
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files
- (the "Software"), to deal in the Software without restriction,
- including without limitation the rights to use, copy, modify, merge,
- publish, distribute, sublicense, and/or sell copies of the Software,
- and to permit persons to whom the Software is furnished to do so,
- subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
- ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//Pianimals
+/* William Chou
+   Marlon Twyman
+   Gaby Anton
+   Lucy Henninsgard 
+   Cameron MacArthur
 */
 
 // import the TUIO library
 import TUIO.*;
 import ddf.minim.*;
+import java.util.Map;
+import java.util.Arrays;
 
 // declare a TuioProcessing client
 TuioProcessing tuioClient;
@@ -40,9 +26,11 @@ PFont font;
 boolean verbose = false; // print console debug messages
 boolean callback = true; // updates only after callbacks
 
-PImage img;
+PImage displayed_img, frog_img, cow_img, elephant_img, goat_img;
 Minim minim;
-AudioPlayer player;
+AudioPlayer pianoA, pianoB, pianoC, pianoD, pianoE, pianoF, pianoG;
+HashMap<Integer, AudioPlayer> notes = new HashMap<Integer, AudioPlayer>();
+HashMap<Integer, PImage> imgs = new HashMap<Integer, PImage>();
 
 void setup()
 {
@@ -51,10 +39,31 @@ void setup()
   size(displayWidth,displayHeight);
   noStroke();
   fill(0);
-  img = loadImage("cartoon-frog.png");
+  cow_img = loadImage("cartoon-frog.png");
+  elephant_img = loadImage("cartoon-frog.png");
+  frog_img = loadImage("cartoon-frog.png");
+  goat_img = loadImage("cartoon-frog.png");
   
   minim = new Minim(this);
-  player = minim.loadFile("pianoG.wav");
+  pianoA = minim.loadFile("pianoA.wav");
+  pianoB = minim.loadFile("pianoB.wav");
+  pianoC = minim.loadFile("pianoC.wav");
+  pianoD = minim.loadFile("pianoD.wav");
+  pianoE = minim.loadFile("pianoE.wav");
+  pianoF = minim.loadFile("pianoF.wav");
+  pianoG = minim.loadFile("pianoG.wav");
+  
+  //setup a hash table of the notes to play
+  notes.put(0, pianoC);
+  notes.put(1, pianoE); 
+  notes.put(2, pianoF); 
+  notes.put(3, pianoG);
+  
+  //setup the hash table of the imgs to display
+  imgs.put(0, cow_img); 
+  imgs.put(1, elephant_img);
+  imgs.put(2, frog_img);
+  imgs.put(3, goat_img);
   
   // periodic updates
   if (!callback) {
@@ -80,59 +89,40 @@ void draw()
   float obj_size = object_size*scale_factor; 
   float cur_size = cursor_size*scale_factor; 
    
+  boolean[] visibleIDS = new boolean[4];
   ArrayList<TuioObject> tuioObjectList = tuioClient.getTuioObjectList();
   for (int i=0;i<tuioObjectList.size();i++) {
      TuioObject tobj = tuioObjectList.get(i);
+     visibleIDS[tobj.getSymbolID()] = true;
      stroke(0);
      fill(0,0,0);
      pushMatrix();
      translate(tobj.getScreenX(width),tobj.getScreenY(height));
      rotate(tobj.getAngle());
-     //rect(-obj_size/2,-obj_size/2,obj_size,obj_size);
-     image(img, -obj_size/2,-obj_size/2, img.width/4, img.height/4);
-     if(tobj.getSymbolID()==0){
-       player.play();
+     for(int k = 0; k<visibleIDS.length; k++){
+       //check for which note does not appear
+       if(visibleIDS[k] == false){
+         //if it doesnt appear, play the corresponding note
+         notes.get(k).play();
+         displayed_img = imgs.get(k);
+         image(displayed_img, -obj_size/2, -obj_size/2, displayed_img.width/4, displayed_img.height/4);
+       }
      }
+     Arrays.fill(visibleIDS, false);
+     //rect(-obj_size/2,-obj_size/2,obj_size,obj_size);
+//     if(tobj.getSymbolID()==0){
+//       if(notePlayed == false){
+//         pianoF.play();
+//         notePlayed = true;
+//       }
+//       image(frog_img, -obj_size/2,-obj_size/2, frog_img.width/4, frog_img.height/4);
+//     }
      popMatrix();
      fill(255);
      text(""+tobj.getSymbolID(), tobj.getScreenX(width), tobj.getScreenY(height));
    }
    
-//   ArrayList<TuioCursor> tuioCursorList = tuioClient.getTuioCursorList();
-//   for (int i=0;i<tuioCursorList.size();i++) {
-//      TuioCursor tcur = tuioCursorList.get(i);
-//      ArrayList<TuioPoint> pointList = tcur.getPath();
-//      
-//      if (pointList.size()>0) {
-//        stroke(0,0,255);
-//        TuioPoint start_point = pointList.get(0);
-//        for (int j=0;j<pointList.size();j++) {
-//           TuioPoint end_point = pointList.get(j);
-//           line(start_point.getScreenX(width),start_point.getScreenY(height),end_point.getScreenX(width),end_point.getScreenY(height));
-//           start_point = end_point;
-//        }
-//        
-//        stroke(192,192,192);
-//        fill(192,192,192);
-//        ellipse( tcur.getScreenX(width), tcur.getScreenY(height),cur_size,cur_size);
-//        fill(0);
-//        text(""+ tcur.getCursorID(),  tcur.getScreenX(width)-5,  tcur.getScreenY(height)+5);
-//      }
-//   }
-//   
-//  ArrayList<TuioBlob> tuioBlobList = tuioClient.getTuioBlobList();
-//  for (int i=0;i<tuioBlobList.size();i++) {
-//     TuioBlob tblb = tuioBlobList.get(i);
-//     stroke(0);
-//     fill(0);
-//     pushMatrix();
-//     translate(tblb.getScreenX(width),tblb.getScreenY(height));
-//     rotate(tblb.getAngle());
-//     ellipse(-1*tblb.getScreenWidth(width)/2,-1*tblb.getScreenHeight(height)/2, tblb.getScreenWidth(width), tblb.getScreenWidth(width));
-//     popMatrix();
-//     fill(255);
-//     text(""+tblb.getBlobID(), tblb.getScreenX(width), tblb.getScreenX(width));
-//   }
+
 }
 
 // --------------------------------------------------------------

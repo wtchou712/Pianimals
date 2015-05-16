@@ -92,7 +92,6 @@ void setup()
 void draw()
 {
   background(255);
-  background(barn);
   textFont(font,18*scale_factor);
   float obj_size = object_size*scale_factor; 
   float cur_size = cursor_size*scale_factor; 
@@ -133,7 +132,7 @@ void draw()
        notes.get(k).rewind();
        notes.get(k).play();
        displayed_img = imgs.get(k);
-       image(displayed_img, 200, 300, displayed_img.width/4, displayed_img.height/4);
+       image(displayed_img, 300, (height/2)+50, displayed_img.width/4, displayed_img.height/4);
      }
      popMatrix();
      fill(255);

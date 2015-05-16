@@ -9,7 +9,9 @@
 // import the TUIO library
 import TUIO.*;
 import ddf.minim.*;
+import ddf.minim.ugens.*;
 import java.util.Map;
+import java.lang.Object;
 import java.util.Arrays;
 
 // declare a TuioProcessing client
@@ -31,6 +33,7 @@ Minim minim;
 AudioPlayer pianoA, pianoB, pianoC, pianoD, pianoE, pianoF, pianoG;
 HashMap<Integer, AudioPlayer> notes = new HashMap<Integer, AudioPlayer>();
 HashMap<Integer, PImage> imgs = new HashMap<Integer, PImage>();
+//Delay myDelay;
 
 void setup()
 {
@@ -39,6 +42,7 @@ void setup()
   size(displayWidth,displayHeight);
   noStroke();
   fill(0);
+  //myDelay = new Delay(this); 
   cow_img = loadImage("cow.png");
   elephant_img = loadImage("elephant.png");
   frog_img = loadImage("frog.png");
@@ -88,40 +92,49 @@ void draw()
   textFont(font,18*scale_factor);
   float obj_size = object_size*scale_factor; 
   float cur_size = cursor_size*scale_factor; 
-   
+  
+  
   boolean[] visibleIDS = new boolean[4];
   ArrayList<TuioObject> tuioObjectList = tuioClient.getTuioObjectList();
   for (int i=0;i<tuioObjectList.size();i++) {
      TuioObject tobj = tuioObjectList.get(i);
      visibleIDS[tobj.getSymbolID()] = true;
-     stroke(0);
-     fill(0,0,0);
-     pushMatrix();
-     translate(tobj.getScreenX(width),tobj.getScreenY(height));
-     rotate(tobj.getAngle());
-     for(int k = 0; k<visibleIDS.length; k++){
-       //check for which note does not appear
-       if(visibleIDS[k] == false){
-         //if it doesnt appear, play the corresponding note
-         notes.get(k).play();
-         displayed_img = imgs.get(k);
-         image(displayed_img, -obj_size/2, -obj_size/2, displayed_img.width/4, displayed_img.height/4);
-       }
-     }
-     Arrays.fill(visibleIDS, false);
+     //print(tobj.getSymbolID());
+//     stroke(0);
+//     fill(0,0,0);
+//     pushMatrix();
+//     translate(tobj.getScreenX(width),tobj.getScreenY(height));
+//     rotate(tobj.getAngle());
      //rect(-obj_size/2,-obj_size/2,obj_size,obj_size);
 //     if(tobj.getSymbolID()==0){
-//       if(notePlayed == false){
-//         pianoF.play();
-//         notePlayed = true;
-//       }
+//       pianoF.play();
 //       image(frog_img, -obj_size/2,-obj_size/2, frog_img.width/4, frog_img.height/4);
 //     }
      popMatrix();
      fill(255);
      text(""+tobj.getSymbolID(), tobj.getScreenX(width), tobj.getScreenY(height));
    }
-   
+   for(int k = 0; k<visibleIDS.length; k++){
+     stroke(0);
+     fill(0,0,0);
+     pushMatrix();
+     translate(tobj.getScreenX(width),tobj.getScreenY(height));
+     rotate(tobj.getAngle());
+     //check for which note does not appear
+     if(visibleIDS[k] == false){
+       //if it doesnt appear, play the corresponding note
+       print(k);
+       notes.get(k).rewind();
+       notes.get(k).play();
+       displayed_img = imgs.get(k);
+       image(displayed_img, -obj_size/2, -obj_size/2, displayed_img.width/4, displayed_img.height/4);
+     }
+     popMatrix();
+     fill(255);
+     text(""+tobj.getSymbolID(), tobj.getScreenX(width), tobj.getScreenY(height));
+   }
+   Arrays.fill(visibleIDS, false);
+   delay(1000);   
 
 }
 

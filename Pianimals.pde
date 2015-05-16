@@ -28,7 +28,7 @@ PFont font;
 boolean verbose = false; // print console debug messages
 boolean callback = true; // updates only after callbacks
 
-PImage displayed_img, frog_img, cow_img, elephant_img, goat_img;
+PImage displayed_img, frog_img, cow_img, elephant_img, goat_img, empty_staff, piano_note, barn;
 Minim minim;
 AudioPlayer pianoA, pianoB, pianoC, pianoD, pianoE, pianoF, pianoG;
 HashMap<Integer, AudioPlayer> notes = new HashMap<Integer, AudioPlayer>();
@@ -42,11 +42,14 @@ void setup()
   size(displayWidth,displayHeight);
   noStroke();
   fill(0);
-  //myDelay = new Delay(this); 
+
   cow_img = loadImage("cow.png");
   elephant_img = loadImage("elephant.png");
   frog_img = loadImage("frog.png");
   goat_img = loadImage("goat.jpg");
+  empty_staff = loadImage("emptystaff.png");
+  piano_note = loadImage("eighthnote.png");
+  barn = loadImage("barn.png");
   
   minim = new Minim(this);
   pianoA = minim.loadFile("pianoA.wav");
@@ -89,10 +92,13 @@ void setup()
 void draw()
 {
   background(255);
+  background(barn);
   textFont(font,18*scale_factor);
   float obj_size = object_size*scale_factor; 
   float cur_size = cursor_size*scale_factor; 
   
+  image(empty_staff, 0, 0, width, height/2);
+  image(barn, 0, height/2, width, height/2);
   
   boolean[] visibleIDS = new boolean[4];
   ArrayList<TuioObject> tuioObjectList = tuioClient.getTuioObjectList();
@@ -118,8 +124,8 @@ void draw()
      stroke(0);
      fill(0,0,0);
      pushMatrix();
-     //translate(tobj.getScreenX(width),tobj.getScreenY(height));
-     //rotate(tobj.getAngle());
+     //draw the barn and empty staff
+     //image(empty_staff, 
      //check for which note does not appear
      if(visibleIDS[k] == false){
        //if it doesnt appear, play the corresponding note
@@ -131,7 +137,6 @@ void draw()
      }
      popMatrix();
      fill(255);
-     //text(""+tobj.getSymbolID(), tobj.getScreenX(width), tobj.getScreenY(height));
    }
    Arrays.fill(visibleIDS, false);
    delay(1000);   

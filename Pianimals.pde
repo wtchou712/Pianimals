@@ -110,16 +110,16 @@ void draw()
 //       pianoF.play();
 //       image(frog_img, -obj_size/2,-obj_size/2, frog_img.width/4, frog_img.height/4);
 //     }
-     popMatrix();
-     fill(255);
-     text(""+tobj.getSymbolID(), tobj.getScreenX(width), tobj.getScreenY(height));
+//     popMatrix();
+//     fill(255);
+//     text(""+tobj.getSymbolID(), tobj.getScreenX(width), tobj.getScreenY(height));
    }
    for(int k = 0; k<visibleIDS.length; k++){
      stroke(0);
      fill(0,0,0);
      pushMatrix();
-     translate(tobj.getScreenX(width),tobj.getScreenY(height));
-     rotate(tobj.getAngle());
+     //translate(tobj.getScreenX(width),tobj.getScreenY(height));
+     //rotate(tobj.getAngle());
      //check for which note does not appear
      if(visibleIDS[k] == false){
        //if it doesnt appear, play the corresponding note
@@ -127,11 +127,11 @@ void draw()
        notes.get(k).rewind();
        notes.get(k).play();
        displayed_img = imgs.get(k);
-       image(displayed_img, -obj_size/2, -obj_size/2, displayed_img.width/4, displayed_img.height/4);
+       image(displayed_img, 200, 300, displayed_img.width/4, displayed_img.height/4);
      }
      popMatrix();
      fill(255);
-     text(""+tobj.getSymbolID(), tobj.getScreenX(width), tobj.getScreenY(height));
+     //text(""+tobj.getSymbolID(), tobj.getScreenX(width), tobj.getScreenY(height));
    }
    Arrays.fill(visibleIDS, false);
    delay(1000);   

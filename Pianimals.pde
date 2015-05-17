@@ -28,7 +28,7 @@ PFont font;
 boolean verbose = false; // print console debug messages
 boolean callback = true; // updates only after callbacks
 
-PImage displayed_img, frog_img, cow_img, elephant_img, goat_img, empty_staff, piano_note, barn;
+PImage displayed_img, frog_img, cat_img, elephant_img, giraffe_img, empty_staff, piano_note, barn;
 Minim minim;
 AudioPlayer pianoA, pianoB, pianoC, pianoD, pianoE, pianoF, pianoG;
 HashMap<Integer, AudioPlayer> notes = new HashMap<Integer, AudioPlayer>();
@@ -43,10 +43,10 @@ void setup()
   noStroke();
   fill(0);
 
-  cow_img = loadImage("cow.png");
+  cat_img = loadImage("cat.png");
   elephant_img = loadImage("elephant.png");
   frog_img = loadImage("frog.png");
-  goat_img = loadImage("goat.jpg");
+  giraffe_img = loadImage("giraffe.png");
   empty_staff = loadImage("emptystaff.png");
   piano_note = loadImage("eighthnote.png");
   barn = loadImage("barn.png");
@@ -67,10 +67,10 @@ void setup()
   notes.put(3, pianoG);
   
   //setup the hash table of the imgs to display
-  imgs.put(0, cow_img); 
+  imgs.put(0, cat_img); 
   imgs.put(1, elephant_img);
   imgs.put(2, frog_img);
-  imgs.put(3, goat_img);
+  imgs.put(3, giraffe_img);
   
   // periodic updates
   if (!callback) {
@@ -132,13 +132,14 @@ void draw()
        notes.get(k).rewind();
        notes.get(k).play();
        displayed_img = imgs.get(k);
-       image(displayed_img, 300, (height/2)+50, displayed_img.width/4, displayed_img.height/4);
+       image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+       image(piano_note, 300, 100, 100, 200);
      }
      popMatrix();
      fill(255);
    }
    Arrays.fill(visibleIDS, false);
-   delay(1000);   
+   delay(500);   
 
 }
 

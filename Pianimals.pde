@@ -14,6 +14,11 @@ import java.util.Map;
 import java.lang.Object;
 import java.util.Arrays;
 
+// import keyboard listeners (testing things when you don't have the time to mess w/ reactivision)
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
+
 // declare a TuioProcessing client
 TuioProcessing tuioClient;
 
@@ -34,6 +39,7 @@ AudioPlayer pianoA, pianoB, pianoC, pianoD, pianoE, pianoF, pianoG;
 HashMap<Integer, AudioPlayer> notes = new HashMap<Integer, AudioPlayer>();
 HashMap<Integer, PImage> imgs = new HashMap<Integer, PImage>();
 //Delay myDelay;
+
 
 void setup()
 {
@@ -119,6 +125,7 @@ void draw()
 //     fill(255);
 //     text(""+tobj.getSymbolID(), tobj.getScreenX(width), tobj.getScreenY(height));
    }
+   
    for(int k = 0; k<visibleIDS.length; k++){
      stroke(0);
      fill(0,0,0);
@@ -210,3 +217,38 @@ void refresh(TuioTime frameTime) {
   if (verbose) println("frame #"+frameTime.getFrameID()+" ("+frameTime.getTotalMilliseconds()+")");
   if (callback) redraw();
 }
+
+//Event listener class for keystrokes (again, trying to build dynamic staff, not tryina reactivision rn)
+public void keyPressed(KeyEvent e) {
+    int keyCode = e.getKeyCode();
+    switch( keyCode ) { 
+        case KeyEvent.VK_A:
+            pianoA.rewind();
+            pianoA.play();
+            break;
+        case KeyEvent.VK_B:
+            pianoB.rewind();
+            pianoB.play(); 
+            break;
+        case KeyEvent.VK_C:
+            pianoC.rewind();
+            pianoC.play();
+            break;
+        case KeyEvent.VK_D :
+            pianoD.rewind();
+            pianoD.play();
+            break;
+        case KeyEvent.VK_E :
+            pianoE.rewind();
+            pianoE.play();
+            break;
+        case KeyEvent.VK_F :
+            pianoF.rewind();
+            pianoF.play();
+            break;
+        case KeyEvent.VK_G :
+            pianoG.rewind();
+            pianoG.play();
+            break;
+     }
+} 

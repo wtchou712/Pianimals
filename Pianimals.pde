@@ -99,9 +99,9 @@ void setup()
   xLoc.put(3, 475); 
   
   //setup the y location of the note to display
-  yLoc.put(0, 55); 
-  yLoc.put(1, 120); 
-  yLoc.put(2, 180); 
+  yLoc.put(0, 350); 
+  yLoc.put(1, 310); 
+  yLoc.put(2, 290); 
   yLoc.put(3, 240); 
   
   

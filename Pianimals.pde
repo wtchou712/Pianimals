@@ -33,12 +33,14 @@ PFont font;
 boolean verbose = false; // print console debug messages
 boolean callback = true; // updates only after callbacks
 
-PImage displayed_img, frog_img, cat_img, elephant_img, giraffe_img, empty_staff, piano_note, barn;
+PImage displayed_img, frog_img, cat_img, elephant_img, giraffe_img, empty_staff, piano_note, barn, cat_face, elephant_face, frog_face, giraffe_face;
 Minim minim;
 AudioPlayer pianoA, pianoB, pianoC, pianoD, pianoE, pianoF, pianoG;
 HashMap<Integer, AudioPlayer> notes = new HashMap<Integer, AudioPlayer>();
 HashMap<Integer, PImage> imgs = new HashMap<Integer, PImage>();
-//Delay myDelay;
+HashMap<Integer, Integer> xLoc = new HashMap<Integer, Integer>();
+HashMap<Integer, Integer> yLoc = new HashMap<Integer, Integer>();
+HashMap<Integer, PImage> faces = new HashMap<Integer, PImage>();
 
 
 void setup()
@@ -49,14 +51,20 @@ void setup()
   noStroke();
   fill(0);
 
+  //load all image files
   cat_img = loadImage("cat.png");
   elephant_img = loadImage("elephant.png");
   frog_img = loadImage("frog.png");
   giraffe_img = loadImage("giraffe.png");
+  cat_face = loadImage("catface.png");
+  elephant_face = loadImage("elephantface.png");
+  frog_face = loadImage("frogface.png");
+  giraffe_face = loadImage("giraffeface.png");
   empty_staff = loadImage("emptystaff.png");
-  piano_note = loadImage("eighthnote.png");
+  piano_note = loadImage("wholenote.png");
   barn = loadImage("barn.png");
   
+  //load all sound files
   minim = new Minim(this);
   pianoA = minim.loadFile("pianoA.wav");
   pianoB = minim.loadFile("pianoB.wav");
@@ -77,6 +85,25 @@ void setup()
   imgs.put(1, elephant_img);
   imgs.put(2, frog_img);
   imgs.put(3, giraffe_img);
+  
+  //setup the hash table of the faces to display
+  faces.put(0, cat_face);
+  faces.put(1, elephant_face);
+  faces.put(2, frog_face);
+  faces.put(3, giraffe_img);
+  
+  //setup the x location of the note to display
+  xLoc.put(0, 475);
+  xLoc.put(1, 475); 
+  xLoc.put(2, 475); 
+  xLoc.put(3, 475); 
+  
+  //setup the y location of the note to display
+  yLoc.put(0, 55); 
+  yLoc.put(1, 120); 
+  yLoc.put(2, 180); 
+  yLoc.put(3, 240); 
+  
   
   // periodic updates
   if (!callback) {
@@ -102,6 +129,7 @@ void draw()
   float obj_size = object_size*scale_factor; 
   float cur_size = cursor_size*scale_factor; 
   
+  //draw the barn and the empty staff
   image(empty_staff, 0, 0, width, height/2);
   image(barn, 0, height/2, width, height/2);
   
@@ -110,28 +138,12 @@ void draw()
   for (int i=0;i<tuioObjectList.size();i++) {
      TuioObject tobj = tuioObjectList.get(i);
      visibleIDS[tobj.getSymbolID()] = true;
-     //print(tobj.getSymbolID());
-//     stroke(0);
-//     fill(0,0,0);
-//     pushMatrix();
-//     translate(tobj.getScreenX(width),tobj.getScreenY(height));
-//     rotate(tobj.getAngle());
-     //rect(-obj_size/2,-obj_size/2,obj_size,obj_size);
-//     if(tobj.getSymbolID()==0){
-//       pianoF.play();
-//       image(frog_img, -obj_size/2,-obj_size/2, frog_img.width/4, frog_img.height/4);
-//     }
-//     popMatrix();
-//     fill(255);
-//     text(""+tobj.getSymbolID(), tobj.getScreenX(width), tobj.getScreenY(height));
    }
    
-   for(int k = 0; k<visibleIDS.length; k++){
+  for(int k = 0; k<visibleIDS.length; k++){
      stroke(0);
      fill(0,0,0);
      pushMatrix();
-     //draw the barn and empty staff
-     //image(empty_staff, 
      //check for which note does not appear
      if(visibleIDS[k] == false){
        //if it doesnt appear, play the corresponding note
@@ -140,14 +152,13 @@ void draw()
        notes.get(k).play();
        displayed_img = imgs.get(k);
        image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-       image(piano_note, 300, 100, 100, 200);
-     }
-     popMatrix();
-     fill(255);
+       image(faces.get(k), xLoc.get(k), yLoc.get(k), piano_note.width/6, piano_note.height/6);
+      }
+      popMatrix();
+      fill(255);
    }
    Arrays.fill(visibleIDS, false);
-   delay(500);   
-
+   //delay(500);   
 }
 
 // --------------------------------------------------------------
@@ -218,7 +229,12 @@ void refresh(TuioTime frameTime) {
   if (callback) redraw();
 }
 
-//Event listener class for keystrokes (again, trying to build dynamic staff, not tryina reactivision rn)
+void mouseClicked(){
+  println("mouseX: " + mouseX); 
+  println("mouseY: " + mouseY);
+}
+
+//Event listener class for keystrokes 
 public void keyPressed(KeyEvent e) {
     int keyCode = e.getKeyCode();
     switch( keyCode ) { 

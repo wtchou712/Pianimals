@@ -90,7 +90,7 @@ void setup()
   faces.put(0, cat_face);
   faces.put(1, elephant_face);
   faces.put(2, frog_face);
-  faces.put(3, giraffe_img);
+  faces.put(3, giraffe_face);
   
   //setup the x location of the note to display
   xLoc.put(0, 475);
@@ -152,13 +152,13 @@ void draw()
        notes.get(k).play();
        displayed_img = imgs.get(k);
        image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-       image(faces.get(k), xLoc.get(k), yLoc.get(k), piano_note.width/6, piano_note.height/6);
+       image(faces.get(k), xLoc.get(k), yLoc.get(k), piano_note.width/4, piano_note.height/4);
       }
       popMatrix();
       fill(255);
    }
    Arrays.fill(visibleIDS, false);
-   //delay(500);   
+   delay(700);   
 }
 
 // --------------------------------------------------------------

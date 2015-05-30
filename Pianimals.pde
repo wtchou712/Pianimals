@@ -42,15 +42,45 @@ HashMap<Integer, Integer> xLoc = new HashMap<Integer, Integer>();
 HashMap<Integer, Integer> yLoc = new HashMap<Integer, Integer>();
 HashMap<Integer, PImage> faces = new HashMap<Integer, PImage>();
 
+boolean titleScreen = true; 
+boolean freePlay = false; 
+boolean learnSong = false; 
+
+int freeButtonX, freeButtonY;
+int learnButtonX, learnButtonY;
+int backButtonX, backButtonY;
+int buttonSizeX = 120;
+int buttonSizeY = 30; 
+color freeButtonColor, learnButtonColor, backButtonColor;
+color freeButtonHighlight, learnButtonHighlight, backButtonHighlight;
+boolean freeButtonOver = false; 
+boolean learnButtonOver = false; 
+boolean backButtonOver = false;
 
 void setup()
 {
   // GUI setup
-  noCursor();
+  //noCursor();
   size(displayWidth,displayHeight);
   noStroke();
   fill(0);
-
+  
+  //set the colors for the interface
+  freeButtonColor = color(255);
+  freeButtonHighlight = color(204);
+  freeButtonX = (width/2)-60;
+  freeButtonY = (height/2)-100;
+  
+  learnButtonColor = color(255);
+  learnButtonHighlight = color(204);
+  learnButtonX = (width/2) - 60;
+  learnButtonY = (height/2)-60;
+  
+  backButtonColor = color(255);
+  backButtonHighlight = color(204);
+  backButtonX = 20; 
+  backButtonY = 20;
+  
   //load all image files
   cat_img = loadImage("cat.png");
   elephant_img = loadImage("elephant.png");
@@ -129,36 +159,150 @@ void draw()
   float obj_size = object_size*scale_factor; 
   float cur_size = cursor_size*scale_factor; 
   
-  //draw the barn and the empty staff
-  image(empty_staff, 0, 0, width, height/2);
-  image(barn, 0, height/2, width, height/2);
+  update();
   
-  boolean[] visibleIDS = new boolean[4];
-  ArrayList<TuioObject> tuioObjectList = tuioClient.getTuioObjectList();
-  for (int i=0;i<tuioObjectList.size();i++) {
-     TuioObject tobj = tuioObjectList.get(i);
-     visibleIDS[tobj.getSymbolID()] = true;
-   }
-   
-  for(int k = 0; k<visibleIDS.length; k++){
+  //code for displaying the title screen
+  if(titleScreen){
+    fill(0);
+    textSize(42); 
+    text("Welcome to Pianimals!" , (width/2)-200, (height/2)-200); 
+    textSize(36); 
+    text("Select an option below", (width/2)-200, (height/2)-150);
+    
+    if(freeButtonOver){
+      fill(freeButtonHighlight);
+    }
+    else {
+      fill(freeButtonColor);
+    }
+    stroke(0);
+    rect(freeButtonX, freeButtonY, buttonSizeX, buttonSizeY); 
+    fill(0);
+    textSize(20);
+    text("Free Play", freeButtonX, freeButtonY+20);
+    
+    if(learnButtonOver) {
+      fill(learnButtonHighlight);
+    }
+    else {  
+      fill(learnButtonColor);
+    }
+    stroke(0);
+    rect(learnButtonX, learnButtonY, buttonSizeX, buttonSizeY);
+    fill(0);
+    textSize(20);
+    text("Learn A Song", learnButtonX, learnButtonY+20);
+
+  }
+  
+  //code for displaying the freeplay mode
+  if(freePlay) {
+    //draw the barn and the empty staff
+    image(empty_staff, 0, 0, width, height/2);
+    image(barn, 0, height/2, width, height/2);
+    
+    boolean[] visibleIDS = new boolean[4];
+    ArrayList<TuioObject> tuioObjectList = tuioClient.getTuioObjectList();
+    for (int i=0;i<tuioObjectList.size();i++) {
+       TuioObject tobj = tuioObjectList.get(i);
+       visibleIDS[tobj.getSymbolID()] = true;
+     }
+     
+    for(int k = 0; k<visibleIDS.length; k++){
+       stroke(0);
+       fill(0,0,0);
+       pushMatrix();
+       //check for which note does not appear
+       if(visibleIDS[k] == false){
+         //if it doesnt appear, play the corresponding note
+         print(k);
+         notes.get(k).rewind();
+         notes.get(k).play();
+         displayed_img = imgs.get(k);
+         image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+         image(faces.get(k), xLoc.get(k), yLoc.get(k), piano_note.width/6, piano_note.height/6);
+        }
+        popMatrix();
+        fill(255);
+     }
+     Arrays.fill(visibleIDS, false);
+     if(backButtonOver){
+       fill(backButtonHighlight);
+     }
+     else {
+       fill(backButtonColor);
+     }
      stroke(0);
-     fill(0,0,0);
-     pushMatrix();
-     //check for which note does not appear
-     if(visibleIDS[k] == false){
-       //if it doesnt appear, play the corresponding note
-       print(k);
-       notes.get(k).rewind();
-       notes.get(k).play();
-       displayed_img = imgs.get(k);
-       image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-       image(faces.get(k), xLoc.get(k), yLoc.get(k), piano_note.width/6, piano_note.height/6);
-      }
-      popMatrix();
-      fill(255);
-   }
-   Arrays.fill(visibleIDS, false);
-   delay(500);   
+     rect(backButtonX, backButtonY, buttonSizeX, buttonSizeY);
+     fill(0);
+     textSize(20);
+     text("Back to Menu", backButtonX, backButtonY+20);
+     
+     delay(500);   
+  }
+  //code for displaying the learn song mode
+  if(learnSong) {
+    
+  }
+}
+
+void update(){
+  if (overButton(freeButtonX, freeButtonY, buttonSizeX, buttonSizeY)){
+    freeButtonOver = true; 
+    learnButtonOver = false; 
+  }
+  else if (overButton(learnButtonX, learnButtonY, buttonSizeX, buttonSizeY)){
+    learnButtonOver = true; 
+    freeButtonOver = false; 
+  }
+  else {
+    freeButtonOver = learnButtonOver = false; 
+  }
+   
+  if(overButton(backButtonX, backButtonY, buttonSizeX, buttonSizeY)){
+    backButtonOver = true; 
+  }
+  else {
+    backButtonOver = false; 
+  }
+}
+
+boolean overButton(int x, int y, int width, int height){
+  if (mouseX >= x && mouseX <= x+width &&
+      mouseY >= y && mouseY <= y+height) {
+    return true;  
+  }
+  else {
+    return false; 
+  }
+}
+
+//boolean overLearnSong(int x, int y, int width, int height){
+//  if (mouseX >= x && mouseX <= x+width &&
+//      mouseY >= y && mouseY <= y+height) {
+//    return true;  
+//  }
+//  else {
+//    return false; 
+//  }
+//}
+
+void mousePressed() {
+  if(freeButtonOver){
+    freePlay = true; 
+    titleScreen = false; 
+    learnSong = false; 
+  }
+  if(learnButtonOver) {
+    learnSong = true; 
+    titleScreen = false; 
+    freePlay = false;
+  }
+  if(backButtonOver){
+    titleScreen = true; 
+    learnSong = false;
+    freePlay = false; 
+  }
 }
 
 // --------------------------------------------------------------

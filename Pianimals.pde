@@ -29,11 +29,16 @@ float object_size = 60;
 float table_size = 760;
 float scale_factor = 1;
 PFont font;
+int visibleCount = 0; 
+int startTime; 
+int elapsedTime;
 
 boolean verbose = false; // print console debug messages
 boolean callback = true; // updates only after callbacks
 
-PImage displayed_img, frog_img, cat_img, elephant_img, giraffe_img, empty_staff, piano_note, barn, cat_face, elephant_face, frog_face, giraffe_face;
+PImage displayed_img, alligator_img, bear_img, calf_img, dog_img, elephant_img, frog_img, giraffe_img;
+PImage cat_face, alligator_face, bear_face, calf_face, dog_face, elephant_face, frog_face, giraffe_face;
+PImage empty_staff, piano_note, barn;
 Minim minim;
 AudioPlayer pianoA, pianoB, pianoC, pianoD, pianoE, pianoF, pianoG;
 HashMap<Integer, AudioPlayer> notes = new HashMap<Integer, AudioPlayer>();
@@ -82,14 +87,22 @@ void setup()
   backButtonY = 20;
   
   //load all image files
-  cat_img = loadImage("cat.png");
+  alligator_img = loadImage("alligator.png");
+  bear_img = loadImage("bear.png");
+  calf_img = loadImage("calf.png");
+  dog_img = loadImage("dog.png");
   elephant_img = loadImage("elephant.png");
   frog_img = loadImage("frog.png");
   giraffe_img = loadImage("giraffe.png");
-  cat_face = loadImage("catface.png");
-  elephant_face = loadImage("elephantface.png");
-  frog_face = loadImage("frogface.png");
-  giraffe_face = loadImage("giraffeface.png");
+  
+  alligator_face = loadImage("alligatorFace.png");
+  bear_face = loadImage("bearFace.png");
+  calf_face = loadImage("calfFace.png");
+  dog_face = loadImage("dogFace.png");
+  elephant_face = loadImage("elephantFace.png");
+  frog_face = loadImage("frogFace.png");
+  giraffe_face = loadImage("giraffeFace.png");
+  
   empty_staff = loadImage("emptystaff.png");
   piano_note = loadImage("wholenote.png");
   barn = loadImage("barn.png");
@@ -105,35 +118,49 @@ void setup()
   pianoG = minim.loadFile("pianoG.wav");
   
   //setup a hash table of the notes to play
-  notes.put(0, pianoC);
-  notes.put(1, pianoE); 
-  notes.put(2, pianoF); 
-  notes.put(3, pianoG);
+  notes.put(0, pianoA);
+  notes.put(1, pianoB); 
+  notes.put(2, pianoC); 
+  notes.put(3, pianoD);
+  notes.put(4, pianoE);
+  notes.put(5, pianoF);
+  notes.put(6, pianoG);
   
   //setup the hash table of the imgs to display
-  imgs.put(0, cat_img); 
-  imgs.put(1, elephant_img);
-  imgs.put(2, frog_img);
-  imgs.put(3, giraffe_img);
+  imgs.put(0, alligator_img); 
+  imgs.put(1, bear_img);
+  imgs.put(2, calf_img);
+  imgs.put(3, dog_img);
+  imgs.put(4, elephant_img);
+  imgs.put(5, frog_img);
+  imgs.put(6, giraffe_img);
   
   //setup the hash table of the faces to display
-  faces.put(0, cat_face);
-  faces.put(1, elephant_face);
-  faces.put(2, frog_face);
-  faces.put(3, giraffe_img);
+  faces.put(0, alligator_face);
+  faces.put(1, bear_face);
+  faces.put(2, calf_face);
+  faces.put(3, dog_face);
+  faces.put(4, elephant_face);
+  faces.put(5, frog_face);
+  faces.put(6, giraffe_face);
   
   //setup the x location of the note to display
   xLoc.put(0, 475);
   xLoc.put(1, 475); 
   xLoc.put(2, 475); 
   xLoc.put(3, 475); 
+  xLoc.put(4, 475);
+  xLoc.put(5, 475);
+  xLoc.put(6, 475);
   
   //setup the y location of the note to display
   yLoc.put(0, 350); 
   yLoc.put(1, 310); 
   yLoc.put(2, 290); 
   yLoc.put(3, 240); 
-  
+  yLoc.put(4, 240); 
+  yLoc.put(5, 240); 
+  yLoc.put(6, 240);
   
   // periodic updates
   if (!callback) {
@@ -201,11 +228,13 @@ void draw()
     image(empty_staff, 0, 0, width, height/2);
     image(barn, 0, height/2, width, height/2);
     
-    boolean[] visibleIDS = new boolean[4];
+    visibleCount = 0; 
+    boolean[] visibleIDS = new boolean[7];
     ArrayList<TuioObject> tuioObjectList = tuioClient.getTuioObjectList();
     for (int i=0;i<tuioObjectList.size();i++) {
        TuioObject tobj = tuioObjectList.get(i);
        visibleIDS[tobj.getSymbolID()] = true;
+       visibleCount++;
      }
      
     for(int k = 0; k<visibleIDS.length; k++){
@@ -213,7 +242,7 @@ void draw()
        fill(0,0,0);
        pushMatrix();
        //check for which note does not appear
-       if(visibleIDS[k] == false){
+       if(visibleIDS[k] == false && visibleCount!=0){
          //if it doesnt appear, play the corresponding note
          print(k);
          notes.get(k).rewind();
@@ -240,9 +269,174 @@ void draw()
      
      delay(500);   
   }
+  
   //code for displaying the learn song mode
   if(learnSong) {
+    elapsedTime = (millis() - startTime)/1000;
+    //draw the barn and the empty staff
+    image(empty_staff, 0, 0, width, height/2);
+    image(barn, 0, height/2, width, height/2);
     
+    if(elapsedTime >= 0.25 && elapsedTime<=1){
+      //play E
+      displayed_img = imgs.get(4);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      notes.get(4).rewind();
+      notes.get(4).play();
+    }
+    else if(elapsedTime>1 && elapsedTime<=2){
+      //play D
+      displayed_img = imgs.get(3);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      notes.get(3).rewind();
+      notes.get(3).play();
+    }
+    else if(elapsedTime>2 && elapsedTime<=3){
+      //play C
+      displayed_img = imgs.get(2);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      notes.get(2).rewind();
+      notes.get(2).play();
+    }
+    else if(elapsedTime>3 && elapsedTime <=4){
+      //play D
+      displayed_img = imgs.get(3);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      notes.get(3).rewind();
+      notes.get(3).play();
+    }
+    else if(elapsedTime>4 && elapsedTime<=7){
+      //play E 3 times
+      displayed_img = imgs.get(4);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      notes.get(4).rewind();
+      notes.get(4).play();
+    }
+    else if(elapsedTime>8 && elapsedTime<=11){
+      //play D 3 times
+      notes.get(3).rewind();
+      notes.get(3).play();
+      displayed_img = imgs.get(3);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+    }
+    else if(elapsedTime>12 && elapsedTime<=13){
+      //play E
+      notes.get(4).rewind();
+      notes.get(4).play();
+      displayed_img = imgs.get(4);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+    }
+    else if (elapsedTime>13 && elapsedTime<=15){
+      //play G 2 times
+      notes.get(6).rewind();
+      notes.get(6).play();
+      displayed_img = imgs.get(6);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+    }
+    else if(elapsedTime>16 && elapsedTime<=17){
+      //play E
+      notes.get(4).rewind();
+      notes.get(4).play();
+      displayed_img = imgs.get(4);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+    }
+    else if(elapsedTime>17 && elapsedTime<=18){
+      //play D
+      notes.get(3).rewind();
+      notes.get(3).play();
+      displayed_img = imgs.get(3);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+    }
+    else if(elapsedTime>18 && elapsedTime<=19){
+      //play C
+      notes.get(2).rewind();
+      notes.get(2).play();
+      displayed_img = imgs.get(2);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+    }
+    else if(elapsedTime>19 && elapsedTime<=20){
+      //play D
+      notes.get(3).rewind();
+      notes.get(3).play();
+      displayed_img = imgs.get(3);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+    }
+    else if(elapsedTime>20 && elapsedTime<=24){
+      //play E 4 times
+      notes.get(4).rewind();
+      notes.get(4).play();
+      displayed_img = imgs.get(4);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+    }
+    else if(elapsedTime>24 && elapsedTime<=26){
+      //play D 2 times
+      notes.get(3).rewind();
+      notes.get(3).play();
+      displayed_img = imgs.get(3);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+    }
+    else if(elapsedTime>26 && elapsedTime<=27){
+      //play E
+      notes.get(4).rewind();
+      notes.get(4).play();
+      displayed_img = imgs.get(4);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+    }
+    else if(elapsedTime>27 && elapsedTime<=28){
+      //play D
+      notes.get(3).rewind();
+      notes.get(3).play();
+      displayed_img = imgs.get(3);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+    }
+    else if(elapsedTime>28 && elapsedTime<=29){
+      //play C
+      notes.get(2).rewind();
+      notes.get(2).play();
+      displayed_img = imgs.get(2);
+      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+    }
+    
+    visibleCount = 0; 
+    boolean[] visibleIDS = new boolean[7];
+    ArrayList<TuioObject> tuioObjectList = tuioClient.getTuioObjectList();
+    for (int i=0;i<tuioObjectList.size();i++) {
+       TuioObject tobj = tuioObjectList.get(i);
+       visibleIDS[tobj.getSymbolID()] = true;
+       visibleCount++;
+     }
+     
+    for(int k = 0; k<visibleIDS.length; k++){
+       stroke(0);
+       fill(0,0,0);
+       pushMatrix();
+       //check for which note does not appear
+       if(visibleIDS[k] == false && visibleCount!=0){
+         //if it doesnt appear, play the corresponding note
+         print(k);
+         notes.get(k).rewind();
+         notes.get(k).play();
+         displayed_img = imgs.get(k);
+         image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+         image(faces.get(k), xLoc.get(k), yLoc.get(k), piano_note.width/6, piano_note.height/6);
+        }
+        popMatrix();
+        fill(255);
+     }
+     Arrays.fill(visibleIDS, false);
+     if(backButtonOver){
+       fill(backButtonHighlight);
+     }
+     else {
+       fill(backButtonColor);
+     }
+     stroke(0);
+     rect(backButtonX, backButtonY, buttonSizeX, buttonSizeY);
+     fill(0);
+     textSize(20);
+     text("Back to Menu", backButtonX, backButtonY+20);
+     
+     delay(700);   
   }
 }
 
@@ -297,6 +491,7 @@ void mousePressed() {
     learnSong = true; 
     titleScreen = false; 
     freePlay = false;
+    startTime = millis();
   }
   if(backButtonOver){
     titleScreen = true; 

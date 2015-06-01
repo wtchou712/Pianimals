@@ -136,6 +136,7 @@ void setup()
   imgs.put(6, giraffe_img);
   
   //setup the hash table of the faces to display
+<<<<<<< HEAD
   faces.put(0, alligator_face);
   faces.put(1, bear_face);
   faces.put(2, calf_face);
@@ -143,6 +144,12 @@ void setup()
   faces.put(4, elephant_face);
   faces.put(5, frog_face);
   faces.put(6, giraffe_face);
+=======
+  faces.put(0, cat_face);
+  faces.put(1, elephant_face);
+  faces.put(2, frog_face);
+  faces.put(3, giraffe_face);
+>>>>>>> Will
   
   //setup the x location of the note to display
   xLoc.put(0, 475);
@@ -431,6 +438,7 @@ void draw()
        fill(backButtonColor);
      }
      stroke(0);
+<<<<<<< HEAD
      rect(backButtonX, backButtonY, buttonSizeX, buttonSizeY);
      fill(0);
      textSize(20);
@@ -498,6 +506,25 @@ void mousePressed() {
     learnSong = false;
     freePlay = false; 
   }
+=======
+     fill(0,0,0);
+     pushMatrix();
+     //check for which note does not appear
+     if(visibleIDS[k] == false){
+       //if it doesnt appear, play the corresponding note
+       print(k);
+       notes.get(k).rewind();
+       notes.get(k).play();
+       displayed_img = imgs.get(k);
+       image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+       image(faces.get(k), xLoc.get(k), yLoc.get(k), piano_note.width/4, piano_note.height/4);
+      }
+      popMatrix();
+      fill(255);
+   }
+   Arrays.fill(visibleIDS, false);
+   delay(700);   
+>>>>>>> Will
 }
 
 // --------------------------------------------------------------

@@ -40,7 +40,7 @@ PImage displayed_img, alligator_img, bear_img, calf_img, dog_img, elephant_img, 
 PImage cat_face, alligator_face, bear_face, calf_face, dog_face, elephant_face, frog_face, giraffe_face;
 PImage empty_staff, piano_note, barn;
 Minim minim;
-AudioPlayer pianoA, pianoB, pianoC, pianoD, pianoE, pianoF, pianoG;
+AudioPlayer pianoA, pianoB, pianoC, pianoD, pianoE, pianoF, pianoG, pianohighC;
 HashMap<Integer, AudioPlayer> notes = new HashMap<Integer, AudioPlayer>();
 HashMap<Integer, PImage> imgs = new HashMap<Integer, PImage>();
 HashMap<Integer, Integer> xLoc = new HashMap<Integer, Integer>();
@@ -108,13 +108,14 @@ void setup()
   
   //load all sound files
   minim = new Minim(this);
-  pianoA = minim.loadFile("pianoA.wav");
-  pianoB = minim.loadFile("pianoB.wav");
-  pianoC = minim.loadFile("pianoC.wav");
-  pianoD = minim.loadFile("pianoD.wav");
-  pianoE = minim.loadFile("pianoE.wav");
-  pianoF = minim.loadFile("pianoF.wav");
-  pianoG = minim.loadFile("pianoG.wav");
+  pianoC = minim.loadFile("notes/pianoC.mp3");
+  pianoD = minim.loadFile("notes/pianoD.mp3");
+  pianoE = minim.loadFile("notes/pianoE.mp3");
+  pianoF = minim.loadFile("notes/pianoF.mp3");
+  pianoG = minim.loadFile("notes/pianoG.mp3");
+  pianoA = minim.loadFile("notes/pianoA.mp3");
+  pianoB = minim.loadFile("notes/pianoB.mp3");
+  pianohighC = minim.loadFile("notes/pianohighC.mp3");
   
   //setup a hash table of the notes to play
   notes.put(0, pianoA);
@@ -124,6 +125,7 @@ void setup()
   notes.put(4, pianoE);
   notes.put(5, pianoF);
   notes.put(6, pianoG);
+  notes.put(7, pianohighC);
   
   //setup the hash table of the imgs to display
   imgs.put(0, alligator_img); 

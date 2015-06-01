@@ -65,7 +65,6 @@ boolean backButtonOver = false;
 void setup()
 {
   // GUI setup
-  //noCursor();
   size(displayWidth,displayHeight);
   noStroke();
   fill(0);

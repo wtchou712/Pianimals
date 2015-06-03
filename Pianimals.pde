@@ -49,9 +49,10 @@ HashMap<Integer, Integer> yLoc = new HashMap<Integer, Integer>();
 HashMap<Integer, PImage> faces = new HashMap<Integer, PImage>();
 HashMap<Integer, Integer> img_sizeX = new HashMap<Integer, Integer>();
 HashMap<Integer, Integer> img_sizeY = new HashMap<Integer, Integer>();
-HashMap<Integer, Integer> face_sizeX = new HashMap<Integer, Intenger>();
+HashMap<Integer, Integer> face_sizeX = new HashMap<Integer, Integer>();
 HashMap<Integer, Integer> face_sizeY = new HashMap<Integer, Integer>();
-
+HashMap<Integer, Integer> xLocFace = new HashMap<Integer, Integer>();
+HashMap<Integer, Integer> yLocFace = new HashMap<Integer, Integer>();
 
 boolean titleScreen = true; 
 boolean freePlay = false; 
@@ -194,6 +195,44 @@ void setup()
   img_sizeY.put(6, bear_img.height/2);
   img_sizeY.put(7, calf_img.height/4);
   
+  face_sizeX.put(0, 3*cow_face.width/4);
+  face_sizeX.put(1, dog_face.width/2);
+  face_sizeX.put(2, elephant_face.width/3);
+  face_sizeX.put(3, frog_face.width/2);
+  face_sizeX.put(4, 3*giraffe_face.width/16);
+  face_sizeX.put(5, alligator_face.width/4);
+  face_sizeX.put(6, bear_face.width/4);
+  face_sizeX.put(7, calf_face.width/7);
+  
+  face_sizeY.put(0, 3*cow_face.height/4);
+  face_sizeY.put(1, dog_face.height/2);
+  face_sizeY.put(2, elephant_face.height/3);
+  face_sizeY.put(3, frog_face.height/2);
+  face_sizeY.put(4, 3*giraffe_face.height/16);
+  face_sizeY.put(5, alligator_face.height/4);
+  face_sizeY.put(6, bear_face.height/4);
+  face_sizeY.put(7, calf_face.height/7);
+  
+  xLocFace.put(0, 300);
+  xLocFace.put(1, 375); 
+  xLocFace.put(2, 475);
+  xLocFace.put(3, 575); 
+  xLocFace.put(4, 650); 
+  xLocFace.put(5, 750); 
+  xLocFace.put(6, 800); 
+  xLocFace.put(7, 900); 
+  
+  yLocFace.put(0, 250); //C
+  yLocFace.put(1, 215); //D
+  yLocFace.put(2, 195); //E
+  yLocFace.put(3, 185); //F
+  yLocFace.put(4, 150); //G
+  yLocFace.put(5, 135); //A
+  yLocFace.put(6, 110); //B
+  yLocFace.put(7, 80);  //C
+  
+  
+  
   // periodic updates
   if (!callback) {
     frameRate(60); //<>//
@@ -303,8 +342,8 @@ void draw()
 
       for(int i=0; i<8; i++){
         
-        image(imgs.get(i), xLoc.get(i), 4*height/10, img_sizeX.get(i), img_sizeY.get(i));
-        image(faces.get(i), xLoc.get(i), 2*height/10, faces.get(i).width/4, faces.get(i).height/4);
+        image(imgs.get(i), xLoc.get(i), yLoc.get(i), img_sizeX.get(i), img_sizeY.get(i));
+        image(faces.get(i), xLocFace.get(i), yLocFace.get(i), face_sizeX.get(i), face_sizeY.get(i));
       }
   }
   

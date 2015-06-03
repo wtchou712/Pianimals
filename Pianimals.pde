@@ -32,13 +32,14 @@ PFont font;
 int visibleCount = 0; 
 int startTime; 
 int elapsedTime;
+int currentNote = 1;
 
 boolean verbose = false; // print console debug messages
 boolean callback = true; // updates only after callbacks
 
-PImage displayed_img, alligator_img, bear_img, calf_img, dog_img, elephant_img, frog_img, giraffe_img;
-PImage cat_face, alligator_face, bear_face, calf_face, dog_face, elephant_face, frog_face, giraffe_face;
-PImage empty_staff, piano_note, barn;
+PImage displayed_img, alligator_img, bear_img, calf_img, cow_img, dog_img, elephant_img, frog_img, giraffe_img;
+PImage cat_face, alligator_face, bear_face, calf_face, cow_face, dog_face, elephant_face, frog_face, giraffe_face;
+PImage empty_staff, piano_note, barn, currentNoteImg;
 Minim minim;
 AudioPlayer pianoA, pianoB, pianoC, pianoD, pianoE, pianoF, pianoG, pianohighC;
 HashMap<Integer, AudioPlayer> notes = new HashMap<Integer, AudioPlayer>();
@@ -46,6 +47,11 @@ HashMap<Integer, PImage> imgs = new HashMap<Integer, PImage>();
 HashMap<Integer, Integer> xLoc = new HashMap<Integer, Integer>();
 HashMap<Integer, Integer> yLoc = new HashMap<Integer, Integer>();
 HashMap<Integer, PImage> faces = new HashMap<Integer, PImage>();
+HashMap<Integer, Integer> img_sizeX = new HashMap<Integer, Integer>();
+HashMap<Integer, Integer> img_sizeY = new HashMap<Integer, Integer>();
+HashMap<Integer, Integer> face_sizeX = new HashMap<Integer, Intenger>();
+HashMap<Integer, Integer> face_sizeY = new HashMap<Integer, Integer>();
+
 
 boolean titleScreen = true; 
 boolean freePlay = false; 
@@ -86,25 +92,28 @@ void setup()
   backButtonY = 20;
   
   //load all image files
-  alligator_img = loadImage("alligator.png");
-  bear_img = loadImage("bear.png");
-  calf_img = loadImage("calf.png");
-  dog_img = loadImage("dog.png");
-  elephant_img = loadImage("elephant.png");
-  frog_img = loadImage("frog.png");
-  giraffe_img = loadImage("giraffe.png");
+  alligator_img = loadImage("imgs/alligator.png");
+  bear_img = loadImage("imgs/bear.png");
+  calf_img = loadImage("imgs/calf.png");
+  cow_img = loadImage("imgs/cow.png");
+  dog_img = loadImage("imgs/dog.png");
+  elephant_img = loadImage("imgs/elephant.png");
+  frog_img = loadImage("imgs/frog.png");
+  giraffe_img = loadImage("imgs/giraffe.png");
   
-  alligator_face = loadImage("alligatorFace.png");
-  bear_face = loadImage("bearFace.png");
-  calf_face = loadImage("calfFace.png");
-  dog_face = loadImage("dogFace.png");
-  elephant_face = loadImage("elephantFace.png");
-  frog_face = loadImage("frogFace.png");
-  giraffe_face = loadImage("giraffeFace.png");
+  alligator_face = loadImage("imgs/alligatorFace.png");
+  bear_face = loadImage("imgs/bearFace.png");
+  calf_face = loadImage("imgs/calfFace.png");
+  cow_face = loadImage("imgs/cowFace.png");
+  dog_face = loadImage("imgs/dogFace.png");
+  elephant_face = loadImage("imgs/elephantFace.png");
+  frog_face = loadImage("imgs/frogFace.png");
+  giraffe_face = loadImage("imgs/giraffeFace.png");
   
-  empty_staff = loadImage("emptystaff.png");
-  piano_note = loadImage("wholenote.png");
-  barn = loadImage("barn.png");
+  empty_staff = loadImage("imgs/emptystaff.png");
+  piano_note = loadImage("imgs/wholenote.png");
+  barn = loadImage("imgs/barn2.png");
+  currentNoteImg = elephant_img;
   
   //load all sound files
   minim = new Minim(this);
@@ -118,50 +127,72 @@ void setup()
   pianohighC = minim.loadFile("notes/pianohighC.mp3");
   
   //setup a hash table of the notes to play
-  notes.put(0, pianoA);
-  notes.put(1, pianoB); 
-  notes.put(2, pianoC); 
-  notes.put(3, pianoD);
-  notes.put(4, pianoE);
-  notes.put(5, pianoF);
-  notes.put(6, pianoG);
+  notes.put(0, pianoC);
+  notes.put(1, pianoD); 
+  notes.put(2, pianoE); 
+  notes.put(3, pianoF);
+  notes.put(4, pianoG);
+  notes.put(5, pianoA);
+  notes.put(6, pianoB);
   notes.put(7, pianohighC);
   
   //setup the hash table of the imgs to display
-  imgs.put(0, alligator_img); 
-  imgs.put(1, bear_img);
-  imgs.put(2, calf_img);
-  imgs.put(3, dog_img);
-  imgs.put(4, elephant_img);
-  imgs.put(5, frog_img);
-  imgs.put(6, giraffe_img);
+  imgs.put(0, cow_img); 
+  imgs.put(1, dog_img);
+  imgs.put(2, elephant_img);
+  imgs.put(3, frog_img);
+  imgs.put(4, giraffe_img);
+  imgs.put(5, alligator_img);
+  imgs.put(6, bear_img);
+  imgs.put(7, calf_img);
   
   //setup the hash table of the faces to display
-  faces.put(0, alligator_face);
-  faces.put(1, bear_face);
-  faces.put(2, calf_face);
-  faces.put(3, dog_face);
-  faces.put(4, elephant_face);
-  faces.put(5, frog_face);
-  faces.put(6, giraffe_face);
+  faces.put(0, cow_face);
+  faces.put(1, dog_face);
+  faces.put(2, elephant_face);
+  faces.put(3, frog_face);
+  faces.put(4, giraffe_face);
+  faces.put(5, alligator_face);
+  faces.put(6, bear_face);
+  faces.put(7, calf_face);
   
   //setup the x location of the note to display
-  xLoc.put(0, 475);
-  xLoc.put(1, 475); 
-  xLoc.put(2, 475); 
-  xLoc.put(3, 475); 
-  xLoc.put(4, 475);
-  xLoc.put(5, 475);
-  xLoc.put(6, 475);
+  xLoc.put(0, 0*width/9);
+  xLoc.put(1, 1*width/9); 
+  xLoc.put(2, 2*width/9); 
+  xLoc.put(3, 3*width/9); 
+  xLoc.put(4, 4*width/9);
+  xLoc.put(5, 5*width/9);
+  xLoc.put(6, 6*width/9);
+  xLoc.put(7, 7*width/9); 
   
   //setup the y location of the note to display
-  yLoc.put(0, 350); 
-  yLoc.put(1, 310); 
-  yLoc.put(2, 290); 
-  yLoc.put(3, 240); 
-  yLoc.put(4, 240); 
-  yLoc.put(5, 240); 
-  yLoc.put(6, 240);
+  yLoc.put(0, 6*height/10); 
+  yLoc.put(1, 6*height/10); 
+  yLoc.put(2, 6*height/10); 
+  yLoc.put(3, 6*height/10); 
+  yLoc.put(4, 6*height/10); 
+  yLoc.put(5, 6*height/10); 
+  yLoc.put(6, 6*height/10);
+  yLoc.put(7, 6*height/10);
+  
+  img_sizeX.put(0, cow_img.width/4);
+  img_sizeX.put(1, 3*dog_img.width/4);
+  img_sizeX.put(2, 3*elephant_img.width/4);
+  img_sizeX.put(3, 4*frog_img.width/4);
+  img_sizeX.put(4, giraffe_img.width/4);
+  img_sizeX.put(5, alligator_img.width/4);
+  img_sizeX.put(6, bear_img.width/2);
+  img_sizeX.put(7, calf_img.width/4);
+  
+  img_sizeY.put(0, cow_img.height/4);
+  img_sizeY.put(1, 3*dog_img.height/4);
+  img_sizeY.put(2, 3*elephant_img.height/4);
+  img_sizeY.put(3, 3*frog_img.height/4);
+  img_sizeY.put(4, giraffe_img.height/4);
+  img_sizeY.put(5, alligator_img.height/4);
+  img_sizeY.put(6, bear_img.height/2);
+  img_sizeY.put(7, calf_img.height/4);
   
   // periodic updates
   if (!callback) {
@@ -226,180 +257,66 @@ void draw()
   //code for displaying the freeplay mode
   if(freePlay) {
     //draw the barn and the empty staff
-    image(empty_staff, 0, 0, width, height/2);
-    image(barn, 0, height/2, width, height/2);
-    
-    visibleCount = 0; 
-    boolean[] visibleIDS = new boolean[7];
-    ArrayList<TuioObject> tuioObjectList = tuioClient.getTuioObjectList();
-    for (int i=0;i<tuioObjectList.size();i++) {
-       TuioObject tobj = tuioObjectList.get(i);
-       visibleIDS[tobj.getSymbolID()] = true;
-       visibleCount++;
-     }
-     
-    for(int k = 0; k<visibleIDS.length; k++){
-       stroke(0);
-       fill(0,0,0);
-       pushMatrix();
-       //check for which note does not appear
-       if(visibleIDS[k] == false && visibleCount!=0){
-         //if it doesnt appear, play the corresponding note
-         print(k);
-         notes.get(k).rewind();
-         notes.get(k).play();
-         displayed_img = imgs.get(k);
-         image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-         image(faces.get(k), xLoc.get(k), yLoc.get(k), piano_note.width/6, piano_note.height/6);
-        }
-        popMatrix();
-        fill(255);
-     }
-     Arrays.fill(visibleIDS, false);
-     if(backButtonOver){
-       fill(backButtonHighlight);
-     }
-     else {
-       fill(backButtonColor);
-     }
-     stroke(0);
-     rect(backButtonX, backButtonY, buttonSizeX, buttonSizeY);
-     fill(0);
-     textSize(20);
-     text("Back to Menu", backButtonX, backButtonY+20);
-     
-     delay(500);   
+    image(empty_staff, 0, 0, width, 4*height/10);
+    image(barn, 0, 4*height/10, width, 6*height/10);
+//    
+//    visibleCount = 0; 
+//    boolean[] visibleIDS = new boolean[8];
+//    ArrayList<TuioObject> tuioObjectList = tuioClient.getTuioObjectList();
+//    for (int i=0;i<tuioObjectList.size();i++) {
+//       TuioObject tobj = tuioObjectList.get(i);
+//       visibleIDS[tobj.getSymbolID()] = true;
+//       visibleCount++;
+//     }
+//     
+//    for(int k = 0; k<visibleIDS.length; k++){
+//       stroke(0);
+//       fill(0,0,0);
+//       pushMatrix();
+//       //check for which note does not appear
+//       if(visibleIDS[k] == false && visibleCount!=0){
+//         //if it doesnt appear, play the corresponding note
+//         print(k);
+//         notes.get(k).rewind();
+//         notes.get(k).play();
+//         displayed_img = imgs.get(k);
+//         image(displayed_img, xLoc.get(), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+//         image(faces.get(k), xLoc.get(k), yLoc.get(k), piano_note.width/6, piano_note.height/6);
+//        }
+//        popMatrix();
+//        fill(255);
+//     }
+//     Arrays.fill(visibleIDS, false);
+//     if(backButtonOver){
+//       fill(backButtonHighlight);
+//     }
+//     else {
+//       fill(backButtonColor);
+//     }
+//     stroke(0);
+//     rect(backButtonX, backButtonY, buttonSizeX, buttonSizeY);
+//     fill(0);
+//     textSize(20);
+//     text("Back to Menu", backButtonX, backButtonY+20);
+//     
+//     delay(500);   
+
+      for(int i=0; i<8; i++){
+        
+        image(imgs.get(i), xLoc.get(i), 4*height/10, img_sizeX.get(i), img_sizeY.get(i));
+        image(faces.get(i), xLoc.get(i), 2*height/10, faces.get(i).width/4, faces.get(i).height/4);
+      }
   }
   
   //code for displaying the learn song mode
   if(learnSong) {
     elapsedTime = (millis() - startTime)/1000;
     //draw the barn and the empty staff
-    image(empty_staff, 0, 0, width, height/2);
-    image(barn, 0, height/2, width, height/2);
-    
-    if(elapsedTime >= 0.25 && elapsedTime<=1){
-      //play E
-      displayed_img = imgs.get(4);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-      notes.get(4).rewind();
-      notes.get(4).play();
-    }
-    else if(elapsedTime>1 && elapsedTime<=2){
-      //play D
-      displayed_img = imgs.get(3);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-      notes.get(3).rewind();
-      notes.get(3).play();
-    }
-    else if(elapsedTime>2 && elapsedTime<=3){
-      //play C
-      displayed_img = imgs.get(2);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-      notes.get(2).rewind();
-      notes.get(2).play();
-    }
-    else if(elapsedTime>3 && elapsedTime <=4){
-      //play D
-      displayed_img = imgs.get(3);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-      notes.get(3).rewind();
-      notes.get(3).play();
-    }
-    else if(elapsedTime>4 && elapsedTime<=7){
-      //play E 3 times
-      displayed_img = imgs.get(4);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-      notes.get(4).rewind();
-      notes.get(4).play();
-    }
-    else if(elapsedTime>8 && elapsedTime<=11){
-      //play D 3 times
-      notes.get(3).rewind();
-      notes.get(3).play();
-      displayed_img = imgs.get(3);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-    }
-    else if(elapsedTime>12 && elapsedTime<=13){
-      //play E
-      notes.get(4).rewind();
-      notes.get(4).play();
-      displayed_img = imgs.get(4);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-    }
-    else if (elapsedTime>13 && elapsedTime<=15){
-      //play G 2 times
-      notes.get(6).rewind();
-      notes.get(6).play();
-      displayed_img = imgs.get(6);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-    }
-    else if(elapsedTime>16 && elapsedTime<=17){
-      //play E
-      notes.get(4).rewind();
-      notes.get(4).play();
-      displayed_img = imgs.get(4);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-    }
-    else if(elapsedTime>17 && elapsedTime<=18){
-      //play D
-      notes.get(3).rewind();
-      notes.get(3).play();
-      displayed_img = imgs.get(3);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-    }
-    else if(elapsedTime>18 && elapsedTime<=19){
-      //play C
-      notes.get(2).rewind();
-      notes.get(2).play();
-      displayed_img = imgs.get(2);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-    }
-    else if(elapsedTime>19 && elapsedTime<=20){
-      //play D
-      notes.get(3).rewind();
-      notes.get(3).play();
-      displayed_img = imgs.get(3);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-    }
-    else if(elapsedTime>20 && elapsedTime<=24){
-      //play E 4 times
-      notes.get(4).rewind();
-      notes.get(4).play();
-      displayed_img = imgs.get(4);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-    }
-    else if(elapsedTime>24 && elapsedTime<=26){
-      //play D 2 times
-      notes.get(3).rewind();
-      notes.get(3).play();
-      displayed_img = imgs.get(3);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-    }
-    else if(elapsedTime>26 && elapsedTime<=27){
-      //play E
-      notes.get(4).rewind();
-      notes.get(4).play();
-      displayed_img = imgs.get(4);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-    }
-    else if(elapsedTime>27 && elapsedTime<=28){
-      //play D
-      notes.get(3).rewind();
-      notes.get(3).play();
-      displayed_img = imgs.get(3);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-    }
-    else if(elapsedTime>28 && elapsedTime<=29){
-      //play C
-      notes.get(2).rewind();
-      notes.get(2).play();
-      displayed_img = imgs.get(2);
-      image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
-    }
+    image(empty_staff, 0, 0, width, 4*height/10);
+    image(barn, 0, 4*height/10, width, 6*height/10);
     
     visibleCount = 0; 
-    boolean[] visibleIDS = new boolean[7];
+    boolean[] visibleIDS = new boolean[8];
     ArrayList<TuioObject> tuioObjectList = tuioClient.getTuioObjectList();
     for (int i=0;i<tuioObjectList.size();i++) {
        TuioObject tobj = tuioObjectList.get(i);
@@ -418,12 +335,183 @@ void draw()
          notes.get(k).rewind();
          notes.get(k).play();
          displayed_img = imgs.get(k);
-         image(displayed_img, 300, (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+         image(displayed_img, xLoc.get(k), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
          image(faces.get(k), xLoc.get(k), yLoc.get(k), piano_note.width/6, piano_note.height/6);
         }
         popMatrix();
         fill(255);
      }
+      
+    if(currentNote==1 && !visibleIDS[2]){
+      //play E
+      displayed_img = imgs.get(2);
+      image(displayed_img, xLoc.get(2), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      notes.get(2).rewind();
+      notes.get(2).play();
+      currentNote++;
+      currentNoteImg = dog_img;
+    }
+    else if(currentNote==2 && !visibleIDS[1]){
+      //play D
+      displayed_img = imgs.get(1);
+      image(displayed_img, xLoc.get(1), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      notes.get(1).rewind();
+      notes.get(1).play();
+      currentNote++;
+      currentNoteImg = cow_img; 
+    }
+    else if(currentNote==3 && !visibleIDS[0]){
+      //play C
+      displayed_img = imgs.get(0);
+      image(displayed_img, xLoc.get(0), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      notes.get(0).rewind();
+      notes.get(0).play();
+      currentNote++;
+      currentNoteImg = dog_img;
+    }
+    else if(currentNote==4 && !visibleIDS[1]){
+      //play D
+      displayed_img = imgs.get(1);
+      image(displayed_img, xLoc.get(1), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      notes.get(1).rewind();
+      notes.get(1).play();
+      currentNote++;
+      currentNoteImg = elephant_img;
+    }
+    else if(currentNote>=5 && currentNote<=7 && !visibleIDS[2]){
+      //play E 3 times
+      displayed_img = imgs.get(2);
+      image(displayed_img, xLoc.get(2), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      notes.get(2).rewind();
+      notes.get(2).play();
+      currentNote++;
+      if(currentNote==8){
+        currentNoteImg = dog_img;
+      }
+    }
+    else if(currentNote>=8 && currentNote<=10 && !visibleIDS[1]){
+      //play D 3 times
+      notes.get(1).rewind();
+      notes.get(1).play();
+      displayed_img = imgs.get(1);
+      image(displayed_img, xLoc.get(1), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      currentNote++;
+      if (currentNote==11){
+        currentNoteImg = elephant_img;
+      }      
+    }
+    else if(currentNote==11 && !visibleIDS[2]){
+      //play E
+      notes.get(2).rewind();
+      notes.get(2).play();
+      displayed_img = imgs.get(2);
+      image(displayed_img, xLoc.get(2), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      currentNote++;
+      currentNoteImg = giraffe_img;
+    }
+    else if (currentNote>=12 && currentNote<=13 && !visibleIDS[4]){
+      //play G 2 times
+      notes.get(4).rewind();
+      notes.get(4).play();
+      displayed_img = imgs.get(4);
+      image(displayed_img, xLoc.get(4), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      currentNote++;
+      if(currentNote==14){
+        currentNoteImg = elephant_img;
+      }
+    }
+    else if(currentNote==14 && !visibleIDS[2]){
+      //play E
+      notes.get(2).rewind();
+      notes.get(2).play();
+      displayed_img = imgs.get(2);
+      image(displayed_img, xLoc.get(2), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      currentNote++;
+      currentNoteImg = dog_img;
+    }
+    else if(currentNote==15 && !visibleIDS[1]){
+      //play D
+      notes.get(1).rewind();
+      notes.get(1).play();
+      displayed_img = imgs.get(1);
+      image(displayed_img, xLoc.get(1), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      currentNote++;
+      currentNoteImg = cow_img;
+    }
+    else if(currentNote==16 && !visibleIDS[0]){
+      //play C
+      notes.get(0).rewind();
+      notes.get(0).play();
+      displayed_img = imgs.get(0);
+      image(displayed_img, xLoc.get(0), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      currentNote++;
+      currentNoteImg = dog_img;
+    }
+    else if(currentNote==17 && !visibleIDS[1]){
+      //play D
+      notes.get(1).rewind();
+      notes.get(1).play();
+      displayed_img = imgs.get(1);
+      image(displayed_img, xLoc.get(1), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      currentNote++;
+      currentNoteImg = elephant_img;
+    }
+    else if(currentNote>=18 && currentNote<=21 && !visibleIDS[2]){
+      //play E 4 times
+      notes.get(2).rewind();
+      notes.get(2).play();
+      displayed_img = imgs.get(2);
+      image(displayed_img, xLoc.get(2), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      currentNote++;
+      if(currentNote==22){
+        currentNoteImg = dog_img;
+      }
+    }
+    else if(currentNote>=22 && currentNote<=23 && !visibleIDS[1]){
+      //play D 2 times
+      notes.get(1).rewind();
+      notes.get(1).play();
+      displayed_img = imgs.get(1);
+      image(displayed_img, xLoc.get(1), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      currentNote++;
+      if(currentNote==24){
+        currentNoteImg = elephant_img;
+      }
+    }
+    else if(currentNote==24 && !visibleIDS[2]){
+      //play E
+      notes.get(2).rewind();
+      notes.get(2).play();
+      displayed_img = imgs.get(2);
+      image(displayed_img, xLoc.get(2), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      currentNote++;
+      currentNoteImg = dog_img;
+    }
+    else if(currentNote==25 && !visibleIDS[1]){
+      //play D
+      notes.get(1).rewind();
+      notes.get(1).play();
+      displayed_img = imgs.get(1);
+      image(displayed_img, xLoc.get(1), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      currentNote++;
+      currentNoteImg = cow_img;
+    }
+    else if(currentNote==26 && !visibleIDS[0]){
+      //play C
+      notes.get(0).rewind();
+      notes.get(0).play();
+      displayed_img = imgs.get(0);
+      image(displayed_img, xLoc.get(0), (height/2)+50, displayed_img.width/2, displayed_img.height/2);
+      currentNote++;
+    }
+    else {
+      if (currentNote != 27) {
+        image(currentNoteImg, 300, (height/2)+50, currentNoteImg.width/2, currentNoteImg.height/2);
+        print(currentNote);
+      }
+    }
+     
+     
      Arrays.fill(visibleIDS, false);
      if(backButtonOver){
        fill(backButtonHighlight);
